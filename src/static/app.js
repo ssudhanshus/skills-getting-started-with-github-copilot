@@ -4,6 +4,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const signupForm = document.getElementById("signup-form");
   const messageDiv = document.getElementById("message");
 
+  // Function to render activity card
+  function renderActivityCard(activity) {
+    const card = document.createElement("div");
+    card.className = "activity-card";
+
+    card.innerHTML = `
+        <h2>${activity.name}</h2>
+        <p>${activity.description}</p>
+        <p><strong>Schedule:</strong> ${activity.schedule}</p>
+        <p><strong>Max Participants:</strong> ${activity.max_participants}</p>
+        <div class="participants">
+            <h3>Participants:</h3>
+            <ul>
+                ${activity.participants.map(participant => `<li>${participant}</li>`).join('')}
+            </ul>
+        </div>
+    `;
+
+    return card;
+  }
+
   // Function to fetch activities from API
   async function fetchActivities() {
     try {
@@ -15,17 +36,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Populate activities list
       Object.entries(activities).forEach(([name, details]) => {
-        const activityCard = document.createElement("div");
-        activityCard.className = "activity-card";
-
-        const spotsLeft = details.max_participants - details.participants.length;
-
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-        `;
+        const activityCard = renderActivityCard({
+          name,
+          description: details.description,
+          schedule: details.schedule,
+          max_participants: details.max_participants,
+          participants: details.participants,
+        });
 
         activitiesList.appendChild(activityCard);
 
